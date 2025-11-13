@@ -50,8 +50,14 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error('Error processing image:', error)
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+    console.error('Error message:', error instanceof Error ? error.message : String(error))
     return NextResponse.json(
-      { success: false, message: 'Error processing image' },
+      { 
+        success: false, 
+        message: 'Error processing image. Check server logs.',
+        error: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     )
   }

@@ -26,31 +26,22 @@ export async function hashImage(imageBuffer: Buffer): Promise<string> {
     // Apply DCT (Discrete Cosine Transform)
     const dct = computeDCT(pixels)
 
-    // Extract top-left 8x8 (excluding DC component at 0,0)
-  const dctLowFreq: number[] = []
+    // Extract top-left 8x8 including DC component
+    const dctValues: number[] = []
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
-        if (i !== 0 || j !== 0) {
-          dctLowFreq.push(dct[i][j])
-        }
+        dctValues.push(dct[i][j])
       }
     }
 
     // Calculate median
-    const sorted = [...dctLowFreq].sort((a, b) => a - b)
+    const sorted = [...dctValues].sort((a, b) => a - b)
     const median = sorted[Math.floor(sorted.length / 2)]
 
     // Generate hash: 1 if above median, 0 otherwise
     let hash = ''
-    let isFirst = true
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
-        if (isFirst) {
-          // Match python imagehash behaviour: DC component is ignored by forcing bit 0
-          hash += '0'
-          isFirst = false
-          continue
-        }
         hash += dct[i][j] > median ? '1' : '0'
       }
     }
@@ -61,9 +52,7 @@ export async function hashImage(imageBuffer: Buffer): Promise<string> {
     console.error('Error hashing image:', error)
     throw error
   }
-}
-
-/**
+}/**
  * Simple 2D DCT implementation
  */
 function computeDCT(pixels: number[][]): number[][] {
