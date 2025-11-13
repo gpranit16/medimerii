@@ -1,0 +1,7 @@
+{
+  "env": {
+    "SECRET_MORSE_CODE": "....- ..... -....",
+    "SECRET_IMAGE_HASH": "952e1e796a386163",
+    "HASH_THRESHOLD": "10"
+  }
+}

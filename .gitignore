@@ -24,7 +24,8 @@ yarn-error.log*
 
 # local env files
 .env*.local
-.env
+# Keep .env for production deployment
+# .env
 
 # vercel
 .vercel

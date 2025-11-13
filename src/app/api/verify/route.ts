@@ -20,9 +20,10 @@ export async function POST(request: NextRequest) {
     // Compute hash of uploaded image
     const uploadedHash = await hashImage(buffer)
 
-    // Get secret hash from environment
-    const secretHash = process.env.SECRET_IMAGE_HASH || '952e1a796a786963'
-    const threshold = parseInt(process.env.HASH_THRESHOLD || '10', 10)
+    // Get secret hash from environment (with hardcoded fallback for deployment)
+    const secretHash = process.env.SECRET_IMAGE_HASH || process.env.NEXT_PUBLIC_SECRET_IMAGE_HASH || '952e1e796a386163'
+    const threshold = parseInt(process.env.HASH_THRESHOLD || process.env.NEXT_PUBLIC_HASH_THRESHOLD || '10', 10)
+    const secretCode = process.env.SECRET_MORSE_CODE || process.env.NEXT_PUBLIC_SECRET_MORSE_CODE || '....- ..... -....'
 
     // Calculate hamming distance
     const difference = hammingDistance(uploadedHash, secretHash)
@@ -34,7 +35,6 @@ export async function POST(request: NextRequest) {
 
     // Check if hashes match within threshold
     if (difference <= threshold) {
-      const secretCode = process.env.SECRET_MORSE_CODE || '....- ..... -....'
       return NextResponse.json({
         success: true,
         message: '✅ Correct MRI found!',
